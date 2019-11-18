@@ -112,6 +112,45 @@ defmodule ExMarshalTest do
   end
 
   describe "Float" do
+    test "0.1" do
+      assert ExMarshal.load("\x04\bf\b0.1") == 0.1
+    end
+
+    test "-0.1" do
+      assert ExMarshal.load("\x04\bf\t-0.1") == -0.1
+    end
+
+    test "1e100" do
+      assert ExMarshal.load("\x04\bf\n1e100") == 1.0e+100
+    end
+
+    test "-1e100" do
+      assert ExMarshal.load("\x04\bf\f-1e-100") == -1.0e-100
+    end
+
+    test "1.1e-100" do
+      assert ExMarshal.load("\x04\bf\r1.1e-100") == 1.1e-100
+    end
+
+    test "-1.1e100" do
+      assert ExMarshal.load("\x04\bf\r-1.1e100") == -1.1e+100
+    end
+
+    test "0.0" do
+      assert ExMarshal.load("\x04\bf\x060") == 0.0
+    end
+
+    test "NaN" do
+      assert ExMarshal.load("\x04\bf\bnan") == :nan
+    end
+
+    test "inf" do
+      assert ExMarshal.load("\x04\bf\binf") == :inf
+    end
+
+    test "-inf" do
+      assert ExMarshal.load("\x04\bf\t-inf") == :"-inf"
+    end
   end
 
   describe "Bignum" do

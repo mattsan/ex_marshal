@@ -6,8 +6,6 @@ defmodule ExMarshal do
    or https://docs.ruby-lang.org/en/2.6.0/marshal_rdoc.html
   """
 
-  alias ExMarshal.{Fixnum}
-
   @major 4
   @minor 8
 
@@ -21,5 +19,6 @@ defmodule ExMarshal do
   def parse(<<"0", rest::binary>>), do: {nil, rest}
   def parse(<<"T", rest::binary>>), do: {true, rest}
   def parse(<<"F", rest::binary>>), do: {false, rest}
-  def parse(<<"i", rest::binary>>), do: Fixnum.parse(rest)
+  def parse(<<"i", rest::binary>>), do: ExMarshal.Fixnum.parse(rest)
+  def parse(<<"f", rest::binary>>), do: ExMarshal.Float.parse(rest)
 end
