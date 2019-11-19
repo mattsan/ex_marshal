@@ -164,6 +164,9 @@ defmodule ExMarshalTest do
   end
 
   describe "String" do
+    test "\"\"" do
+      assert ExMarshal.load("\x04\b\"\x00") == ""
+    end
   end
 
   describe "Regexp" do
@@ -188,6 +191,12 @@ defmodule ExMarshalTest do
   end
 
   describe "Symbol (link)" do
+  end
+
+  describe "instance variable" do
+    test "\"foo\"" do
+      assert ExMarshal.load("\x04\bI\"\bfoo\x06:\x06ET") == "foo"
+    end
   end
 
   describe "link" do
