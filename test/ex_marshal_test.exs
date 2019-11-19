@@ -182,6 +182,9 @@ defmodule ExMarshalTest do
   end
 
   describe "Symbol" do
+    test ":foo" do
+      assert ExMarshal.load("\x04\b:\bfoo") == :foo
+    end
   end
 
   describe "Symbol (link)" do

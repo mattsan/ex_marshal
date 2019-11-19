@@ -22,4 +22,5 @@ defmodule ExMarshal do
   def parse(<<?i, rest::binary>>), do: ExMarshal.Fixnum.parse(rest)
   def parse(<<?f, rest::binary>>), do: ExMarshal.Float.parse(rest)
   def parse(<<?l, rest::binary>>), do: ExMarshal.Bignum.parse(rest)
+  def parse(<<?:, rest::binary>>), do: ExMarshal.Symbol.parse(rest)
 end
