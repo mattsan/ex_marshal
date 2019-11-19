@@ -173,6 +173,13 @@ defmodule ExMarshalTest do
   end
 
   describe "Array" do
+    test "[1, 2, 3]" do
+      assert ExMarshal.load("\x04\b[\bi\x06i\ai\b") == [1, 2, 3]
+    end
+
+    test "[123, \"abc\", :def]" do
+      assert ExMarshal.load("\x04\b[\bi\x01{I\"\babc\x06:\x06ET:\bdef") == [123, "abc", :def]
+    end
   end
 
   describe "Hash" do
