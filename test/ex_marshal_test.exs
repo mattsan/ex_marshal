@@ -70,15 +70,15 @@ defmodule ExMarshalTest do
     end
 
     test "16777215" do
-      assert ExMarshal.load("\x04\bi\x03\xff\xff\xff") == 16777215
+      assert ExMarshal.load("\x04\bi\x03\xff\xff\xff") == 16_777_215
     end
 
     test "16777216" do
-      assert ExMarshal.load("\x04\bi\x04\x00\x00\x00\x01") == 16777216
+      assert ExMarshal.load("\x04\bi\x04\x00\x00\x00\x01") == 16_777_216
     end
 
     test "4294967295" do
-      assert ExMarshal.load("\x04\bi\x04\xff\xff\xff\xff") == 4294967295
+      assert ExMarshal.load("\x04\bi\x04\xff\xff\xff\xff") == 4_294_967_295
     end
   end
 
@@ -104,7 +104,7 @@ defmodule ExMarshalTest do
     end
 
     test "-16777216" do
-      assert ExMarshal.load("\x04\bi\xfd\x00\x00\x00") == -16777216
+      assert ExMarshal.load("\x04\bi\xfd\x00\x00\x00") == -16_777_216
     end
   end
 
