@@ -16,15 +16,19 @@ defmodule ExMarshal do
 
 
   def parse(<<>>), do: []
-  def parse(<<?0, rest::binary>>), do: {nil, rest}
-  def parse(<<?T, rest::binary>>), do: {true, rest}
-  def parse(<<?F, rest::binary>>), do: {false, rest}
-  def parse(<<?i, rest::binary>>), do: ExMarshal.Fixnum.parse(rest)
-  def parse(<<?f, rest::binary>>), do: ExMarshal.Float.parse(rest)
-  def parse(<<?l, rest::binary>>), do: ExMarshal.Bignum.parse(rest)
-  def parse(<<?", rest::binary>>), do: ExMarshal.String.parse(rest)
-  def parse(<<?/, rest::binary>>), do: ExMarshal.Regex.parse(rest)
-  def parse(<<?[, rest::binary>>), do: ExMarshal.Array.parse(rest)
-  def parse(<<?:, rest::binary>>), do: ExMarshal.Symbol.parse(rest)
-  def parse(<<?I, rest::binary>>), do: ExMarshal.InstanceVariable.parse(rest)
+  def parse(<<flag, rest::binary>>) do
+    case flag do
+      ?0 -> {nil, rest}
+      ?T -> {true, rest}
+      ?F -> {false, rest}
+      ?i -> ExMarshal.Fixnum.parse(rest)
+      ?f -> ExMarshal.Float.parse(rest)
+      ?l -> ExMarshal.Bignum.parse(rest)
+      ?" -> ExMarshal.String.parse(rest)
+      ?/ -> ExMarshal.Regex.parse(rest)
+      ?[ -> ExMarshal.Array.parse(rest)
+      ?: -> ExMarshal.Symbol.parse(rest)
+      ?I -> ExMarshal.InstanceVariable.parse(rest)
+    end
+  end
 end
