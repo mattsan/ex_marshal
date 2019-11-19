@@ -170,6 +170,37 @@ defmodule ExMarshalTest do
   end
 
   describe "Regexp" do
+    test "%r/^abc$/" do
+      assert ExMarshal.load("\x04\bI/\n^abc$\x00\x06:\x06EF") == ~r/^abc$/
+    end
+
+    test "%r/abc/i" do
+      assert ExMarshal.load("\x04\bI/\babc\x01\x06:\x06EF") == ~r/abc/i
+    end
+
+    test "%r/abc/x" do
+      assert ExMarshal.load("\x04\bI/\babc\x02\x06:\x06EF") == ~r/abc/x
+    end
+
+    test "%r/abc/m" do
+      assert ExMarshal.load("\x04\bI/\babc\x04\x06:\x06EF") == ~r/abc/m
+    end
+
+    test "%r/abc/ix" do
+      assert ExMarshal.load("\x04\bI/\babc\x03\x06:\x06EF") == ~r/abc/ix
+    end
+
+    test "%r/abc/xm" do
+      assert ExMarshal.load("\x04\bI/\babc\x06\x06:\x06EF") == ~r/abc/xm
+    end
+
+    test "%r/abc/im" do
+      assert ExMarshal.load("\x04\bI/\babc\x05\x06:\x06EF") == ~r/abc/im
+    end
+
+    test "%r/abc/ixm" do
+      assert ExMarshal.load("\x04\bI/\babc\a\x06:\x06EF") == ~r/abc/ixm
+    end
   end
 
   describe "Array" do
