@@ -16,10 +16,10 @@ defmodule ExMarshal do
 
 
   def parse(<<>>), do: []
-  def parse(<<"0", rest::binary>>), do: {nil, rest}
-  def parse(<<"T", rest::binary>>), do: {true, rest}
-  def parse(<<"F", rest::binary>>), do: {false, rest}
-  def parse(<<"i", rest::binary>>), do: ExMarshal.Fixnum.parse(rest)
-  def parse(<<"f", rest::binary>>), do: ExMarshal.Float.parse(rest)
-  def parse(<<"l", rest::binary>>), do: ExMarshal.Bignum.parse(rest)
+  def parse(<<?0, rest::binary>>), do: {nil, rest}
+  def parse(<<?T, rest::binary>>), do: {true, rest}
+  def parse(<<?F, rest::binary>>), do: {false, rest}
+  def parse(<<?i, rest::binary>>), do: ExMarshal.Fixnum.parse(rest)
+  def parse(<<?f, rest::binary>>), do: ExMarshal.Float.parse(rest)
+  def parse(<<?l, rest::binary>>), do: ExMarshal.Bignum.parse(rest)
 end
