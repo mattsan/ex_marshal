@@ -154,6 +154,13 @@ defmodule ExMarshalTest do
   end
 
   describe "Bignum" do
+    test "10_000_000_000" do
+      assert ExMarshal.load("\x04\bl+\b\x00\xE4\vT\x02\x00") == 10_000_000_000
+    end
+
+    test "-10_000_000_000" do
+      assert ExMarshal.load("\x04\bl-\b\x00\xE4\vT\x02\x00") == -10_000_000_000
+    end
   end
 
   describe "String" do
