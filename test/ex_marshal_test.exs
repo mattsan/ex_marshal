@@ -6,10 +6,16 @@ defmodule ExMarshalTest do
     port =
       case value do
         {:ruby, ruby_value} ->
-          Port.open({:spawn, ~s[ruby -e 'print(Marshal.dump(#{ruby_value}))']}, [:binary])
+          Port.open(
+            {:spawn, ~s[ruby -e 'print(Marshal.dump(#{ruby_value}))']},
+            [:binary]
+          )
 
         _ ->
-          Port.open({:spawn, ~s[ruby -e 'print(Marshal.dump(#{Macro.to_string(value)}))']}, [:binary])
+          Port.open(
+            {:spawn, ~s[ruby -e 'print(Marshal.dump(#{Macro.to_string(value)}))']},
+            [:binary]
+          )
       end
 
     receive do
@@ -107,17 +113,17 @@ defmodule ExMarshalTest do
       assert ExMarshal.load(marshaled) == 65536
     end
 
-    @tag source: 16777215
+    @tag source: 16_777_215
     test "16777215", %{marshaled: marshaled} do
       assert ExMarshal.load(marshaled) == 16_777_215
     end
 
-    @tag source: 16777216
+    @tag source: 16_777_216
     test "16777216", %{marshaled: marshaled} do
       assert ExMarshal.load(marshaled) == 16_777_216
     end
 
-    @tag source: 4294967295
+    @tag source: 4_294_967_295
     test "4294967295", %{marshaled: marshaled} do
       assert ExMarshal.load(marshaled) == 4_294_967_295
     end
@@ -149,7 +155,7 @@ defmodule ExMarshalTest do
       assert ExMarshal.load(marshaled) == -65537
     end
 
-    @tag source: -16777216
+    @tag source: -16_777_216
     test "-16777216", %{marshaled: marshaled} do
       assert ExMarshal.load(marshaled) == -16_777_216
     end
