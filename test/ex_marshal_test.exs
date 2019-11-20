@@ -2,109 +2,156 @@ defmodule ExMarshalTest do
   use ExUnit.Case
   doctest ExMarshal
 
+  defp marshal_dump(value) do
+    port =
+      case value do
+        {:ruby, ruby_value} ->
+          Port.open({:spawn, ~s[ruby -e 'print(Marshal.dump(#{ruby_value}))']}, [:binary])
+
+        _ ->
+          Port.open({:spawn, ~s[ruby -e 'print(Marshal.dump(#{Macro.to_string(value)}))']}, [:binary])
+      end
+
+    receive do
+      {^port, {:data, data}} ->
+        data
+    after
+      1_000 ->
+        :timeout
+    end
+  end
+
+  setup context do
+    [marshaled: marshal_dump(context.source)]
+  end
+
   describe "nil, true and false" do
-    test "nil" do
-      assert ExMarshal.load("\x04\b0") == nil
+    @tag source: nil
+    test "nil", %{marshaled: marshaled} do
+      assert ExMarshal.load(marshaled) == nil
     end
 
-    test "true" do
-      assert ExMarshal.load("\x04\bT") == true
+    @tag source: true
+    test "true", %{marshaled: marshaled} do
+      assert ExMarshal.load(marshaled) == true
     end
 
-    test "false" do
-      assert ExMarshal.load("\x04\bF") == false
+    @tag source: false
+    test "false", %{marshaled: marshaled} do
+      assert ExMarshal.load(marshaled) == false
     end
   end
 
   describe "Fixnum / positive / a byte" do
-    test "0" do
-      assert ExMarshal.load("\x04\bi\x00") == 0
+    @tag source: 0
+    test "0", %{marshaled: marshaled} do
+      assert ExMarshal.load(marshaled) == 0
     end
 
-    test "1" do
-      assert ExMarshal.load("\x04\bi\x06") == 1
+    @tag source: 1
+    test "1", %{marshaled: marshaled} do
+      assert ExMarshal.load(marshaled) == 1
     end
 
-    test "10" do
-      assert ExMarshal.load("\x04\bi\x0f") == 10
+    @tag source: 10
+    test "10", %{marshaled: marshaled} do
+      assert ExMarshal.load(marshaled) == 10
     end
 
-    test "122" do
-      assert ExMarshal.load("\x04\bi\x7f") == 122
+    @tag source: 122
+    test "122", %{marshaled: marshaled} do
+      assert ExMarshal.load(marshaled) == 122
     end
   end
 
   describe "Fixnum / negative / a byte" do
-    test "-1" do
-      assert ExMarshal.load("\x04\bi\xfa") == -1
+    @tag source: -1
+    test "-1", %{marshaled: marshaled} do
+      assert ExMarshal.load(marshaled) == -1
     end
 
-    test "-10" do
-      assert ExMarshal.load("\x04\bi\xf1") == -10
+    @tag source: -10
+    test "-10", %{marshaled: marshaled} do
+      assert ExMarshal.load(marshaled) == -10
     end
 
-    test "-123" do
-      assert ExMarshal.load("\x04\bi\x80") == -123
+    @tag source: -123
+    test "-123", %{marshaled: marshaled} do
+      assert ExMarshal.load(marshaled) == -123
     end
   end
 
   describe "Fixnum / positive / multibyte" do
-    test "123" do
-      assert ExMarshal.load("\x04\bi\x01\x7b") == 123
+    @tag source: 123
+    test "123", %{marshaled: marshaled} do
+      assert ExMarshal.load(marshaled) == 123
     end
 
-    test "255" do
-      assert ExMarshal.load("\x04\bi\x01\xff") == 255
+    @tag source: 255
+    test "255", %{marshaled: marshaled} do
+      assert ExMarshal.load(marshaled) == 255
     end
 
-    test "256" do
-      assert ExMarshal.load("\x04\bi\x02\x00\x01") == 256
+    @tag source: 256
+    test "256", %{marshaled: marshaled} do
+      assert ExMarshal.load(marshaled) == 256
     end
 
-    test "65565" do
-      assert ExMarshal.load("\x04\bi\x02\xff\xff") == 65535
+    @tag source: 65535
+    test "65535", %{marshaled: marshaled} do
+      assert ExMarshal.load(marshaled) == 65535
     end
 
-    test "65566" do
-      assert ExMarshal.load("\x04\bi\x03\x00\x00\x01") == 65536
+    @tag source: 65536
+    test "65536", %{marshaled: marshaled} do
+      assert ExMarshal.load(marshaled) == 65536
     end
 
-    test "16777215" do
-      assert ExMarshal.load("\x04\bi\x03\xff\xff\xff") == 16_777_215
+    @tag source: 16777215
+    test "16777215", %{marshaled: marshaled} do
+      assert ExMarshal.load(marshaled) == 16_777_215
     end
 
-    test "16777216" do
-      assert ExMarshal.load("\x04\bi\x04\x00\x00\x00\x01") == 16_777_216
+    @tag source: 16777216
+    test "16777216", %{marshaled: marshaled} do
+      assert ExMarshal.load(marshaled) == 16_777_216
     end
 
-    test "4294967295" do
-      assert ExMarshal.load("\x04\bi\x04\xff\xff\xff\xff") == 4_294_967_295
+    @tag source: 4294967295
+    test "4294967295", %{marshaled: marshaled} do
+      assert ExMarshal.load(marshaled) == 4_294_967_295
     end
   end
 
   describe "Fixnum / negative / multibyte" do
-    test "-124" do
-      assert ExMarshal.load("\x04\bi\xff\x84") == -124
+    @tag source: -124
+    test "-124", %{marshaled: marshaled} do
+      assert ExMarshal.load(marshaled) == -124
     end
 
-    test "-256" do
-      assert ExMarshal.load("\x04\bi\xff\x00") == -256
+    @tag source: -256
+    test "-256", %{marshaled: marshaled} do
+      assert ExMarshal.load(marshaled) == -256
     end
 
-    test "-257" do
-      assert ExMarshal.load("\x04\bi\xfe\xff\xfe") == -257
+    @tag source: -257
+    test "-257", %{marshaled: marshaled} do
+      assert ExMarshal.load(marshaled) == -257
     end
 
-    test "-65536" do
-      assert ExMarshal.load("\x04\bi\xfe\x00\x00") == -65536
+    @tag source: -65536
+    test "-65536", %{marshaled: marshaled} do
+      assert ExMarshal.load(marshaled) == -65536
     end
 
-    test "-65537" do
-      assert ExMarshal.load("\x04\bi\xfd\xff\xff\xfe") == -65537
+    @tag source: -65537
+    test "-65537", %{marshaled: marshaled} do
+      assert ExMarshal.load(marshaled) == -65537
     end
 
-    test "-16777216" do
-      assert ExMarshal.load("\x04\bi\xfd\x00\x00\x00") == -16_777_216
+    @tag source: -16777216
+    test "-16777216", %{marshaled: marshaled} do
+      assert ExMarshal.load(marshaled) == -16_777_216
     end
   end
 
@@ -112,104 +159,127 @@ defmodule ExMarshalTest do
   end
 
   describe "Float" do
-    test "0.1" do
-      assert ExMarshal.load("\x04\bf\b0.1") == 0.1
+    @tag source: 0.1
+    test "0.1", %{marshaled: marshaled} do
+      assert ExMarshal.load(marshaled) == 0.1
     end
 
-    test "-0.1" do
-      assert ExMarshal.load("\x04\bf\t-0.1") == -0.1
+    @tag source: -0.1
+    test "-0.1", %{marshaled: marshaled} do
+      assert ExMarshal.load(marshaled) == -0.1
     end
 
-    test "1e100" do
-      assert ExMarshal.load("\x04\bf\n1e100") == 1.0e+100
+    @tag source: {:ruby, "1e100"}
+    test "1e100", %{marshaled: marshaled} do
+      assert ExMarshal.load(marshaled) == 1.0e+100
     end
 
-    test "-1e100" do
-      assert ExMarshal.load("\x04\bf\f-1e-100") == -1.0e-100
+    @tag source: {:ruby, "-1e100"}
+    test "-1e100", %{marshaled: marshaled} do
+      assert ExMarshal.load(marshaled) == -1.0e100
     end
 
-    test "1.1e-100" do
-      assert ExMarshal.load("\x04\bf\r1.1e-100") == 1.1e-100
+    @tag source: {:ruby, "1.1e-100"}
+    test "1.1e-100", %{marshaled: marshaled} do
+      assert ExMarshal.load(marshaled) == 1.1e-100
     end
 
-    test "-1.1e100" do
-      assert ExMarshal.load("\x04\bf\r-1.1e100") == -1.1e+100
+    @tag source: {:ruby, "-1.1e100"}
+    test "-1.1e100", %{marshaled: marshaled} do
+      assert ExMarshal.load(marshaled) == -1.1e+100
     end
 
-    test "0.0" do
-      assert ExMarshal.load("\x04\bf\x060") == 0.0
+    @tag source: 0.0
+    test "0.0", %{marshaled: marshaled} do
+      assert ExMarshal.load(marshaled) == 0.0
     end
 
-    test "NaN" do
-      assert ExMarshal.load("\x04\bf\bnan") == :nan
+    @tag source: {:ruby, "Float::NAN"}
+    test "NaN", %{marshaled: marshaled} do
+      assert ExMarshal.load(marshaled) == :nan
     end
 
-    test "inf" do
-      assert ExMarshal.load("\x04\bf\binf") == :inf
+    @tag source: {:ruby, "Float::INFINITY"}
+    test "inf", %{marshaled: marshaled} do
+      assert ExMarshal.load(marshaled) == :inf
     end
 
-    test "-inf" do
-      assert ExMarshal.load("\x04\bf\t-inf") == :"-inf"
+    @tag source: {:ruby, "-Float::INFINITY"}
+    test "-inf", %{marshaled: marshaled} do
+      assert ExMarshal.load(marshaled) == :"-inf"
     end
   end
 
   describe "Bignum" do
-    test "10_000_000_000" do
-      assert ExMarshal.load("\x04\bl+\b\x00\xE4\vT\x02\x00") == 10_000_000_000
+    @tag source: 10_000_000_000
+    test "10_000_000_000", %{marshaled: marshaled} do
+      assert ExMarshal.load(marshaled) == 10_000_000_000
     end
 
-    test "-10_000_000_000" do
-      assert ExMarshal.load("\x04\bl-\b\x00\xE4\vT\x02\x00") == -10_000_000_000
+    @tag source: -10_000_000_000
+    test "-10_000_000_000", %{marshaled: marshaled} do
+      assert ExMarshal.load(marshaled) == -10_000_000_000
     end
   end
 
   describe "String" do
-    test "\"\"" do
-      assert ExMarshal.load("\x04\b\"\x00") == ""
+    @tag source: ""
+    test "\"\"", %{marshaled: marshaled} do
+      assert ExMarshal.load(marshaled) == ""
     end
   end
 
   describe "Regexp" do
-    test "%r/^abc$/" do
-      assert ExMarshal.load("\x04\bI/\n^abc$\x00\x06:\x06EF") == ~r/^abc$/
+    @tag source: {:ruby, "%r/^abc$/"}
+    test "%r/^abc$/", %{marshaled: marshaled} do
+      assert ExMarshal.load(marshaled) == ~r/^abc$/
     end
 
-    test "%r/abc/i" do
-      assert ExMarshal.load("\x04\bI/\babc\x01\x06:\x06EF") == ~r/abc/i
+    @tag source: {:ruby, "%r/abc/i"}
+    test "%r/abc/i", %{marshaled: marshaled} do
+      assert ExMarshal.load(marshaled) == ~r/abc/i
     end
 
-    test "%r/abc/x" do
-      assert ExMarshal.load("\x04\bI/\babc\x02\x06:\x06EF") == ~r/abc/x
+    @tag source: {:ruby, "%r/abc/x"}
+    test "%r/abc/x", %{marshaled: marshaled} do
+      assert ExMarshal.load(marshaled) == ~r/abc/x
     end
 
-    test "%r/abc/m" do
-      assert ExMarshal.load("\x04\bI/\babc\x04\x06:\x06EF") == ~r/abc/m
+    @tag source: {:ruby, "%r/abc/m"}
+    test "%r/abc/m", %{marshaled: marshaled} do
+      assert ExMarshal.load(marshaled) == ~r/abc/m
     end
 
-    test "%r/abc/ix" do
-      assert ExMarshal.load("\x04\bI/\babc\x03\x06:\x06EF") == ~r/abc/ix
+    @tag source: {:ruby, "%r/abc/ix"}
+    test "%r/abc/ix", %{marshaled: marshaled} do
+      assert ExMarshal.load(marshaled) == ~r/abc/ix
     end
 
-    test "%r/abc/xm" do
-      assert ExMarshal.load("\x04\bI/\babc\x06\x06:\x06EF") == ~r/abc/xm
+    @tag source: {:ruby, "%r/abc/xm"}
+    test "%r/abc/xm", %{marshaled: marshaled} do
+      assert ExMarshal.load(marshaled) == ~r/abc/xm
     end
 
-    test "%r/abc/im" do
-      assert ExMarshal.load("\x04\bI/\babc\x05\x06:\x06EF") == ~r/abc/im
+    @tag source: {:ruby, "%r/abc/im"}
+    test "%r/abc/im", %{marshaled: marshaled} do
+      assert ExMarshal.load(marshaled) == ~r/abc/im
     end
 
-    test "%r/abc/ixm" do
-      assert ExMarshal.load("\x04\bI/\babc\a\x06:\x06EF") == ~r/abc/ixm
+    @tag source: {:ruby, "%r/abc/ixm"}
+    test "%r/abc/ixm", %{marshaled: marshaled} do
+      assert ExMarshal.load(marshaled) == ~r/abc/ixm
     end
   end
 
   describe "Array" do
-    test "[1, 2, 3]" do
-      assert ExMarshal.load("\x04\b[\bi\x06i\ai\b") == [1, 2, 3]
+    @tag source: [1, 2, 3]
+    test "[1, 2, 3]", %{marshaled: marshaled} do
+      assert ExMarshal.load(marshaled) == [1, 2, 3]
     end
 
-    test "[123, \"abc\", :def]" do
-      assert ExMarshal.load("\x04\b[\bi\x01{I\"\babc\x06:\x06ET:\bdef") == [123, "abc", :def]
+    @tag source: [123, "abc", :def]
+    test "[123, \"abc\", :def]", %{marshaled: marshaled} do
+      assert ExMarshal.load(marshaled) == [123, "abc", :def]
     end
   end
 
@@ -223,8 +293,9 @@ defmodule ExMarshalTest do
   end
 
   describe "Symbol" do
-    test ":foo" do
-      assert ExMarshal.load("\x04\b:\bfoo") == :foo
+    @tag source: :foo
+    test ":foo", %{marshaled: marshaled} do
+      assert ExMarshal.load(marshaled) == :foo
     end
   end
 
@@ -232,8 +303,9 @@ defmodule ExMarshalTest do
   end
 
   describe "instance variable" do
-    test "\"foo\"" do
-      assert ExMarshal.load("\x04\bI\"\bfoo\x06:\x06ET") == "foo"
+    @tag source: "foo"
+    test "\"foo\"", %{marshaled: marshaled} do
+      assert ExMarshal.load(marshaled) == "foo"
     end
   end
 
