@@ -14,8 +14,12 @@ defmodule ExMarshal.InstanceVariable do
     {Enum.reverse(vars), rest, state}
   end
 
-  defp parse_vars(count, vars, <<?:, source::binary>>, state) do
-    {sym, value_and_rest, state2} = ExMarshal.Symbol.parse(source, state)
+  defp parse_vars(count, vars, <<flag, source::binary>>, state) when flag in [?:, ?;] do
+    {sym, value_and_rest, state2} =
+      case flag do
+        ?: -> ExMarshal.Symbol.parse(source, state)
+        ?; -> ExMarshal.Symlink.parse(source, state)
+      end
     {value, rest, state3} = ExMarshal.parse(value_and_rest, state2)
     parse_vars(count - 1, [{sym, value} | vars], rest, state3)
   end

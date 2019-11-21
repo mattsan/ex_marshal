@@ -290,6 +290,10 @@ defmodule ExMarshalTest do
   end
 
   describe "Hash" do
+    @tag source: {:ruby, ~S'{a: 1, "b" => "2", ["c"] => [3]}'}
+    test ~S"{a: 1, 'b' => '2', ['c'] => [3]}", %{marshaled: marshaled} do
+      assert ExMarshal.load(marshaled) == %{:a => 1, "b" => "2", ["c"] => [3]}
+    end
   end
 
   describe "Hash with default value" do
@@ -314,6 +318,11 @@ defmodule ExMarshalTest do
     @tag source: [:foo, :foo, :bar, :foo, :bar, :baz]
     test "[:foo, :foo, :bar, :foo, :bar, :baz]", %{marshaled: marshaled} do
       assert ExMarshal.load(marshaled) == [:foo, :foo, :bar, :foo, :bar, :baz]
+    end
+
+    @tag source: {:ruby, "[{a: :c}, {b: :b}, {c: :a}]"}
+    test "[{a: :c}, {b: :b}, {c: :a}]", %{marshaled: marshaled} do
+      assert ExMarshal.load(marshaled) == [%{a: :c}, %{b: :b}, %{c: :a}]
     end
   end
 
