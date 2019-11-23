@@ -23,7 +23,7 @@ defmodule ExMarshal.Fixnum do
   end
 
   def parse(<<byte_size::signed, rest::binary>>, state) when byte_size < 0 do
-    bit_size = - byte_size * @bit_size_par_byte
+    bit_size = -byte_size * @bit_size_par_byte
     <<value::size(bit_size)-little, rest::binary>> = rest
     {value - (1 <<< bit_size), rest, state}
   end

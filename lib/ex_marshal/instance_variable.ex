@@ -20,6 +20,7 @@ defmodule ExMarshal.InstanceVariable do
         ?: -> ExMarshal.Symbol.parse(source, state)
         ?; -> ExMarshal.Symlink.parse(source, state)
       end
+
     {value, rest, state3} = ExMarshal.parse(value_and_rest, state2)
     parse_vars(count - 1, [{sym, value} | vars], rest, state3)
   end

@@ -15,8 +15,8 @@ defmodule ExMarshal do
     value
   end
 
-
   def parse(<<>>, _), do: []
+
   def parse(<<flag, rest::binary>>, state) do
     case flag do
       ?0 -> {nil, rest, state}
