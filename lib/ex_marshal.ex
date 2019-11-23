@@ -23,6 +23,7 @@ defmodule ExMarshal do
       ?T -> {true, rest, state}
       ?F -> {false, rest, state}
       ?i -> ExMarshal.Fixnum.parse(rest, state)
+      ?o -> ExMarshal.Object.parse(rest, state)
       ?f -> ExMarshal.Float.parse(rest, state)
       ?l -> ExMarshal.Bignum.parse(rest, state)
       ?" -> ExMarshal.String.parse(rest, state)
