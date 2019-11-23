@@ -306,6 +306,15 @@ defmodule ExMarshalTest do
   end
 
   describe "Symbol (link)" do
+    @tag source: [:foo, :foo]
+    test "[:foo, :foo]", %{marshaled: marshaled} do
+      assert ExMarshal.load(marshaled) == [:foo, :foo]
+    end
+
+    @tag source: [:foo, :foo, :bar, :foo, :bar, :baz]
+    test "[:foo, :foo, :bar, :foo, :bar, :baz]", %{marshaled: marshaled} do
+      assert ExMarshal.load(marshaled) == [:foo, :foo, :bar, :foo, :bar, :baz]
+    end
   end
 
   describe "instance variable" do

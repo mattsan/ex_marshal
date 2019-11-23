@@ -8,7 +8,7 @@ defmodule ExMarshal do
 
   @major 4
   @minor 8
-  @initial_state %{}
+  @initial_state %{symbols: []}
 
   def load(<<@major, @minor, rest::binary>>) do
     {value, "", _state} = parse(rest, @initial_state)
@@ -29,6 +29,7 @@ defmodule ExMarshal do
       ?/ -> ExMarshal.Regex.parse(rest, state)
       ?[ -> ExMarshal.Array.parse(rest, state)
       ?: -> ExMarshal.Symbol.parse(rest, state)
+      ?; -> ExMarshal.Symlink.parse(rest, state)
       ?I -> ExMarshal.InstanceVariable.parse(rest, state)
       _ -> {:error, {:unknown_flag, <<flag>>}, state}
     end
