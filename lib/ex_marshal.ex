@@ -11,13 +11,14 @@ defmodule ExMarshal do
   @initial_state %{symbols: []}
 
   def load(<<@major, @minor, rest::binary>>) do
-    {value, "", _state} = parse(rest, @initial_state)
-    value
+    with {value, "", _state} <- parse(rest, @initial_state) do
+      value
+    end
   end
 
   def parse(<<>>, _), do: []
 
-  def parse(<<flag, rest::binary>>, state) do
+  def parse(<<flag, rest::binary>> = sequence, state) do
     case flag do
       ?0 -> {nil, rest, state}
       ?T -> {true, rest, state}
@@ -35,7 +36,7 @@ defmodule ExMarshal do
       ?: -> ExMarshal.Symbol.parse(rest, state)
       ?; -> ExMarshal.Symlink.parse(rest, state)
       ?I -> ExMarshal.InstanceVariable.parse(rest, state)
-      _ -> {:error, {:unknown_flag, <<flag>>}, state}
+      _ -> {:error, {:unknown_flag, %{flag: flag, sequence: sequence}}, state}
     end
   end
 end

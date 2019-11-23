@@ -28,7 +28,10 @@ defmodule ExMarshalTest do
   end
 
   setup context do
-    [marshaled: marshal_dump(context.source)]
+    case Map.get(context, :source, :not_use) do
+      :not_use -> :ok
+      source -> [marshaled: marshal_dump(source)]
+    end
   end
 
   describe "nil, true and false" do
@@ -351,5 +354,11 @@ defmodule ExMarshalTest do
   end
 
   describe "link" do
+  end
+
+  describe "unknown" do
+    test "unknown flag" do
+      assert ExMarshal.load(<<4, 8, "abcdefg">>) == {:error, {:unknown_flag, %{flag: ?a, sequence: "abcdefg"}}, %{symbols: []}}
+    end
   end
 end
