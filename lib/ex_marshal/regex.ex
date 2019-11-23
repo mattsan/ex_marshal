@@ -1,6 +1,7 @@
 defmodule ExMarshal.Regex do
   @moduledoc false
 
+  @spec parse(binary(), map()) :: any()
   def parse(seq, state) do
     {size, source, next_state} = ExMarshal.Fixnum.parse(seq, state)
     {value, <<option, rest::binary>>} = String.split_at(source, size)
@@ -8,6 +9,7 @@ defmodule ExMarshal.Regex do
     {regex, rest, next_state}
   end
 
+  @spec options(0..7) :: binary()
   defp options(n) do
     case n do
       0 -> ""

@@ -1,6 +1,7 @@
 defmodule ExMarshal.Struct do
   @moduledoc false
 
+  @spec parse(binary(), map()) :: any()
   def parse(<<?:, seq::binary>>, state) do
     {"Struct::" <> struct_name, count_and_source, state2} = ExMarshal.String.parse(seq, state)
     {count, source, state3} = ExMarshal.Fixnum.parse(count_and_source, state2)

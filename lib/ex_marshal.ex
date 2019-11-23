@@ -37,6 +37,7 @@ defmodule ExMarshal do
       iex> ExMarshal.load(<<4, 8, "abc">>)
       {:error, {:unknown_flag, %{flag: ?a, sequence: "abc"}}, %{symbols: []}}
   """
+  @spec load(binary()) :: any()
   def load(<<@major, @minor, rest::binary>>) do
     with {value, "", _state} <- parse(rest, @initial_state) do
       value
@@ -46,6 +47,9 @@ defmodule ExMarshal do
   @doc """
   Parse marshaled Ruby objects.
   """
+  @spec parse(binary(), map()) :: any()
+  def parse(sequence, state)
+
   def parse(<<>>, _), do: []
 
   def parse(<<flag, rest::binary>> = sequence, state) do

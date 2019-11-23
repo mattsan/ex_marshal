@@ -3,6 +3,7 @@ defmodule ExMarshal.Bignum do
 
   @bit_size_par_short_int 16
 
+  @spec parse(binary(), map()) :: any()
   def parse(<<sign, seq::binary>>, state) do
     {short_int_size, source, next_state} = ExMarshal.Fixnum.parse(seq, state)
     bit_size = short_int_size * @bit_size_par_short_int

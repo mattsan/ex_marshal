@@ -6,6 +6,9 @@ defmodule ExMarshal.Fixnum do
 
   @bit_size_par_byte 8
 
+  @spec parse(binary(), map()) :: any()
+  def parse(sequence, state)
+
   def parse(<<0, rest::binary>>, state) do
     {0, rest, state}
   end
