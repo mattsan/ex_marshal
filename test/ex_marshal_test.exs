@@ -169,6 +169,11 @@ defmodule ExMarshalTest do
     test "((class Foo; def initialize; @foo = 123; end; end); Foo.new)", %{marshaled: marshaled} do
       assert ExMarshal.load(marshaled) == %{__struct__: Foo, "@foo": 123}
     end
+
+    @tag source: {:ruby, "((class Foo; def initialize; @foo = 123; end; end); [:Foo, Foo.new])"}
+    test "((class Foo; def initialize; @foo = 123; end; end); [:Foo, Foo.new])", %{marshaled: marshaled} do
+      assert ExMarshal.load(marshaled) == [:Foo, %{__struct__: Foo, "@foo": 123}]
+    end
   end
 
   describe "Float" do
