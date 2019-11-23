@@ -7,10 +7,10 @@ defmodule ExMarshal do
 
   Supported version is only 4.8.
 
-  see https://docs.ruby-lang.org/ja/latest/doc/marshal_format.html
-   or https://docs.ruby-lang.org/en/2.6.0/marshal_rdoc.html
+  See [Marshal フォーマット (Ruby 2.6.0)](https://docs.ruby-lang.org/ja/latest/doc/marshal_format.html)
+  or [marshal - Documentation for Ruby 2.6.0](https://docs.ruby-lang.org/en/2.6.0/marshal_rdoc.html).
 
-  This module can parse
+  This module can parse and load
   - `nil`
   - `true`
   - `false`
