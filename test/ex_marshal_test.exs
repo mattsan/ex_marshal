@@ -297,6 +297,15 @@ defmodule ExMarshalTest do
   end
 
   describe "Hash with default value" do
+    @tag source: {:ruby, "Hash.new(0)"}
+    test "Hash.new(0)", %{marshaled: marshaled} do
+      assert ExMarshal.load(marshaled) == %{}
+    end
+
+    @tag source: {:ruby, "Hash.new(0).tap {|h| h.store(:a, 1) }"}
+    test "Hash.new(0).tap {|h| h.store(:a, 1) }", %{marshaled: marshaled} do
+      assert ExMarshal.load(marshaled) == %{a: 1}
+    end
   end
 
   describe "Struct" do

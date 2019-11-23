@@ -29,6 +29,7 @@ defmodule ExMarshal do
       ?/ -> ExMarshal.Regex.parse(rest, state)
       ?[ -> ExMarshal.Array.parse(rest, state)
       ?{ -> ExMarshal.Hash.parse(rest, state)
+      ?} -> ExMarshal.Hash.WithDefault.parse(rest, state)
       ?: -> ExMarshal.Symbol.parse(rest, state)
       ?; -> ExMarshal.Symlink.parse(rest, state)
       ?I -> ExMarshal.InstanceVariable.parse(rest, state)
