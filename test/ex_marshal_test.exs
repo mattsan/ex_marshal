@@ -309,6 +309,10 @@ defmodule ExMarshalTest do
   end
 
   describe "Struct" do
+    @tag source: {:ruby, ~S{Struct.new("St", :a, :b, :c).new(1, "2", :three)}}
+    test ~S{Struct.new("St", :a, :b, :c).new(1, "2", :three)}, %{marshaled: marshaled} do
+      assert ExMarshal.load(marshaled) == %{__struct__: St, a: 1, b: "2", c: :three}
+    end
   end
 
   describe "Symbol" do
