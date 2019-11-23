@@ -29,6 +29,7 @@ defmodule ExMarshal do
       ?[ -> ExMarshal.Array.parse(rest)
       ?: -> ExMarshal.Symbol.parse(rest)
       ?I -> ExMarshal.InstanceVariable.parse(rest)
+      _ -> {:error, {:unknown_flag, <<flag>>}}
     end
   end
 end
