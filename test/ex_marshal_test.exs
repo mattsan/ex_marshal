@@ -171,7 +171,9 @@ defmodule ExMarshalTest do
     end
 
     @tag source: {:ruby, "((class Foo; def initialize; @foo = 123; end; end); [:Foo, Foo.new])"}
-    test "((class Foo; def initialize; @foo = 123; end; end); [:Foo, Foo.new])", %{marshaled: marshaled} do
+    test "((class Foo; def initialize; @foo = 123; end; end); [:Foo, Foo.new])", %{
+      marshaled: marshaled
+    } do
       assert ExMarshal.load(marshaled) == [:Foo, %{__struct__: Foo, "@foo": 123}]
     end
   end
@@ -363,7 +365,8 @@ defmodule ExMarshalTest do
 
   describe "unknown" do
     test "unknown flag" do
-      assert ExMarshal.load(<<4, 8, "abcdefg">>) == {:error, {:unknown_flag, %{flag: ?a, sequence: "abcdefg"}}, %{symbols: []}}
+      assert ExMarshal.load(<<4, 8, "abcdefg">>) ==
+               {:error, {:unknown_flag, %{flag: ?a, sequence: "abcdefg"}}, %{symbols: []}}
     end
   end
 end
