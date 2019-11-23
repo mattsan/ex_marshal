@@ -1,4 +1,6 @@
 defmodule ExMarshal.Object do
+  @moduledoc false
+
   def parse(<<flag, seq::binary>>, state) when flag in [?:, ?;] do
     {class_name, count_and_source, state2} =
       case flag do

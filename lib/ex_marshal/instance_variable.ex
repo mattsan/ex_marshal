@@ -1,4 +1,6 @@
 defmodule ExMarshal.InstanceVariable do
+  @moduledoc false
+
   def parse(seq, state) do
     {value, source, state2} = ExMarshal.parse(seq, state)
     {_vars, rest, state3} = parse_vars(source, state2)

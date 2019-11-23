@@ -1,4 +1,6 @@
 defmodule ExMarshal.Hash do
+  @moduledoc false
+
   def parse(seq, state) do
     {count, source, next_state} = ExMarshal.Fixnum.parse(seq, state)
     parse_pairs(count, [], source, next_state)

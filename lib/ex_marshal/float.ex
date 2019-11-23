@@ -1,4 +1,6 @@
 defmodule ExMarshal.Float do
+  @moduledoc false
+
   alias ExMarshal.Fixnum
 
   @float_regex ~r/(?<int>-?\d+)(\.(?<dec>\d+))?(e(?<exp>-?\d+))?/

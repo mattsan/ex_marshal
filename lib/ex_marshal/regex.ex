@@ -1,4 +1,6 @@
 defmodule ExMarshal.Regex do
+  @moduledoc false
+
   def parse(seq, state) do
     {size, source, next_state} = ExMarshal.Fixnum.parse(seq, state)
     {value, <<option, rest::binary>>} = String.split_at(source, size)

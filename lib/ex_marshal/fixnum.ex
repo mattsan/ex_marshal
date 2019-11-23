@@ -1,4 +1,6 @@
 defmodule ExMarshal.Fixnum do
+  @moduledoc false
+
   require Bitwise
   import Bitwise
 

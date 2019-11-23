@@ -1,21 +1,51 @@
 defmodule ExMarshal do
+  @major 4
+  @minor 8
+
   @moduledoc """
-  Documentation for ExMarshal.
+  Load marshaled Ruby objects.
+
+  Supported version is only 4.8.
 
   see https://docs.ruby-lang.org/ja/latest/doc/marshal_format.html
    or https://docs.ruby-lang.org/en/2.6.0/marshal_rdoc.html
+
+  This module can parse
+  - `nil`
+  - `true`
+  - `false`
+  - `Fixnum`
+  - `Object` to structs
+  - `Bignum`
+  - `String`
+  - `Regexp` to regexes
+  - `Array` to lists
+  - `Hash` to maps
+  - `Struct` to structs
+  - `Symbol` to atoms
   """
 
-  @major 4
-  @minor 8
   @initial_state %{symbols: []}
 
+  @doc """
+  Parse and load marshaled Ruby objects.
+
+  ## Example
+      iex> ExMarshal.load(<<4, 8, ?i, 1, 123>>)
+      123
+
+      iex> ExMarshal.load(<<4, 8, "abc">>)
+      {:error, {:unknown_flag, %{flag: ?a, sequence: "abc"}}, %{symbols: []}}
+  """
   def load(<<@major, @minor, rest::binary>>) do
     with {value, "", _state} <- parse(rest, @initial_state) do
       value
     end
   end
 
+  @doc """
+  Parse marshaled Ruby objects.
+  """
   def parse(<<>>, _), do: []
 
   def parse(<<flag, rest::binary>> = sequence, state) do

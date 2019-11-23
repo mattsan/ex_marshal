@@ -1,4 +1,6 @@
 defmodule ExMarshal.Bignum do
+  @moduledoc false
+
   @bit_size_par_short_int 16
 
   def parse(<<sign, seq::binary>>, state) do

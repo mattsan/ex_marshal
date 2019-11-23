@@ -1,4 +1,6 @@
 defmodule ExMarshal.Array do
+  @moduledoc false
+
   def parse(seq, state) do
     {count, rest, next_state} = ExMarshal.Fixnum.parse(seq, state)
     parse_values(count, [], rest, next_state)

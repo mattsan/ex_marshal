@@ -1,4 +1,6 @@
 defmodule ExMarshal.Hash.WithDefault do
+  @moduledoc false
+
   def parse(seq, state) do
     {count, source, state2} = ExMarshal.Fixnum.parse(seq, state)
     {hash, default_and_rest, state3} = ExMarshal.Hash.parse_pairs(count, [], source, state2)
