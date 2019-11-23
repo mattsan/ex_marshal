@@ -34,7 +34,7 @@ defmodule ExMarshal do
       ?} -> ExMarshal.Hash.WithDefault.parse(rest, state)
       ?S -> ExMarshal.Struct.parse(rest, state)
       ?: -> ExMarshal.Symbol.parse(rest, state)
-      ?; -> ExMarshal.Symlink.parse(rest, state)
+      ?; -> ExMarshal.Symbol.Link.parse(rest, state)
       ?I -> ExMarshal.InstanceVariable.parse(rest, state)
       _ -> {:error, {:unknown_flag, %{flag: flag, sequence: sequence}}, state}
     end

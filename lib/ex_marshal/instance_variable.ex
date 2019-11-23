@@ -18,7 +18,7 @@ defmodule ExMarshal.InstanceVariable do
     {sym, value_and_rest, state2} =
       case flag do
         ?: -> ExMarshal.Symbol.parse(source, state)
-        ?; -> ExMarshal.Symlink.parse(source, state)
+        ?; -> ExMarshal.Symbol.Link.parse(source, state)
       end
 
     {value, rest, state3} = ExMarshal.parse(value_and_rest, state2)
