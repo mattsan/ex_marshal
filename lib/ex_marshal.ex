@@ -8,28 +8,29 @@ defmodule ExMarshal do
 
   @major 4
   @minor 8
+  @initial_state %{}
 
   def load(<<@major, @minor, rest::binary>>) do
-    {value, ""} = parse(rest)
+    {value, "", _state} = parse(rest, @initial_state)
     value
   end
 
 
-  def parse(<<>>), do: []
-  def parse(<<flag, rest::binary>>) do
+  def parse(<<>>, _), do: []
+  def parse(<<flag, rest::binary>>, state) do
     case flag do
-      ?0 -> {nil, rest}
-      ?T -> {true, rest}
-      ?F -> {false, rest}
-      ?i -> ExMarshal.Fixnum.parse(rest)
-      ?f -> ExMarshal.Float.parse(rest)
-      ?l -> ExMarshal.Bignum.parse(rest)
-      ?" -> ExMarshal.String.parse(rest)
-      ?/ -> ExMarshal.Regex.parse(rest)
-      ?[ -> ExMarshal.Array.parse(rest)
-      ?: -> ExMarshal.Symbol.parse(rest)
-      ?I -> ExMarshal.InstanceVariable.parse(rest)
-      _ -> {:error, {:unknown_flag, <<flag>>}}
+      ?0 -> {nil, rest, state}
+      ?T -> {true, rest, state}
+      ?F -> {false, rest, state}
+      ?i -> ExMarshal.Fixnum.parse(rest, state)
+      ?f -> ExMarshal.Float.parse(rest, state)
+      ?l -> ExMarshal.Bignum.parse(rest, state)
+      ?" -> ExMarshal.String.parse(rest, state)
+      ?/ -> ExMarshal.Regex.parse(rest, state)
+      ?[ -> ExMarshal.Array.parse(rest, state)
+      ?: -> ExMarshal.Symbol.parse(rest, state)
+      ?I -> ExMarshal.InstanceVariable.parse(rest, state)
+      _ -> {:error, {:unknown_flag, <<flag>>}, state}
     end
   end
 end

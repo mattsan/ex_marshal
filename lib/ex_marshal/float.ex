@@ -1,26 +1,28 @@
 defmodule ExMarshal.Float do
   alias ExMarshal.Fixnum
 
-  def parse(seq) do
-    {len, s} = Fixnum.parse(seq)
+  @float_regex ~r/(?<int>-?\d+)(\.(?<dec>\d+))?(e(?<exp>-?\d+))?/
 
-    case String.split_at(s, len) do
+  def parse(seq, state) do
+    {len, source, next_state} = Fixnum.parse(seq, state)
+
+    case String.split_at(source, len) do
       {"nan", rest} ->
-        {:nan, rest}
+        {:nan, rest, state}
 
       {"inf", rest} ->
-        {:inf, rest}
+        {:inf, rest, state}
 
       {"-inf", rest} ->
-        {:"-inf", rest}
+        {:"-inf", rest, state}
 
       {effective, rest} ->
         %{"int" => int, "dec" => dec, "exp" => exp} =
-          Regex.named_captures(~r/(?<int>-?\d+)(\.(?<dec>\d+))?(e(?<exp>-?\d+))?/, effective)
+          Regex.named_captures(@float_regex, effective)
           |> complement_dec()
           |> complement_exp()
 
-        {String.to_float("#{int}.#{dec}e#{exp}"), rest}
+        {String.to_float("#{int}.#{dec}e#{exp}"), rest, next_state}
     end
   end
 

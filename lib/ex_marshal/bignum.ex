@@ -1,8 +1,10 @@
 defmodule ExMarshal.Bignum do
-  def parse(<<sign, seq::binary>>) do
-    {len, s} = ExMarshal.Fixnum.parse(seq)
-    bit_len = len * 16
-    <<effective::size(bit_len)-little, rest::binary>> = s
+  @bit_size_par_short_int 16
+
+  def parse(<<sign, seq::binary>>, state) do
+    {short_int_size, source, next_state} = ExMarshal.Fixnum.parse(seq, state)
+    bit_size = short_int_size * @bit_size_par_short_int
+    <<effective::size(bit_size)-little, rest::binary>> = source
 
     value =
       case sign do
@@ -10,6 +12,6 @@ defmodule ExMarshal.Bignum do
         ?- -> -effective
       end
 
-    {value, rest}
+    {value, rest, next_state}
   end
 end

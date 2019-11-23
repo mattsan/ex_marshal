@@ -1,7 +1,7 @@
 defmodule ExMarshal.Symbol do
-  def parse(seq) do
-    {len, s} = ExMarshal.Fixnum.parse(seq)
-    {value, rest} = String.split_at(s, len)
-    {String.to_atom(value), rest}
+  def parse(seq, state) do
+    {size, source, next_state} = ExMarshal.Fixnum.parse(seq, state)
+    {value, rest} = String.split_at(source, size)
+    {String.to_atom(value), rest, next_state}
   end
 end

@@ -1,9 +1,9 @@
 defmodule ExMarshal.Regex do
-  def parse(seq) do
-    {len, s} = ExMarshal.Fixnum.parse(seq)
-    {value, <<option, rest::binary>>} = String.split_at(s, len)
+  def parse(seq, state) do
+    {size, source, next_state} = ExMarshal.Fixnum.parse(seq, state)
+    {value, <<option, rest::binary>>} = String.split_at(source, size)
     {:ok, regex} = Regex.compile(value, options(option))
-    {regex, rest}
+    {regex, rest, next_state}
   end
 
   defp options(n) do

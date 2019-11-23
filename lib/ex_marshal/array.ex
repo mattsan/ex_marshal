@@ -1,20 +1,15 @@
 defmodule ExMarshal.Array do
-  def parse(seq) do
-    {values, [rest]} =
-      Stream.unfold(ExMarshal.Fixnum.parse(seq), fn
-        nil ->
-          nil
+  def parse(seq, state) do
+    {count, rest, next_state} = ExMarshal.Fixnum.parse(seq, state)
+    parse_values(count, [], rest, next_state)
+  end
 
-        {0, rest} ->
-          {rest, nil}
+  defp parse_values(0, values, rest, state) do
+    {Enum.reverse(values), rest, state}
+  end
 
-        {n, s} ->
-          {value, rest} = ExMarshal.parse(s)
-          {value, {n - 1, rest}}
-      end)
-      |> Enum.to_list()
-      |> Enum.split(-1)
-
-    {values, rest}
+  defp parse_values(count, values, source, state) do
+    {value, rest, next_state} = ExMarshal.parse(source, state)
+    parse_values(count - 1, [value | values], rest, next_state)
   end
 end

@@ -1,22 +1,22 @@
 defmodule ExMarshal.InstanceVariable do
-  def parse(seq) do
-    {value, vars_str} = ExMarshal.parse(seq)
+  def parse(seq, state) do
+    {value, source, state2} = ExMarshal.parse(seq, state)
+    {_vars, rest, state3} = parse_vars(source, state2)
+    {value, rest, state3}
+  end
 
-    vars =
-      Stream.unfold(ExMarshal.Fixnum.parse(vars_str), fn
-        nil ->
-          nil
+  defp parse_vars(source, state) do
+    {count, source, next_state} = ExMarshal.Fixnum.parse(source, state)
+    parse_vars(count, [], source, next_state)
+  end
 
-        {0, rest} ->
-          {rest, nil}
+  defp parse_vars(0, vars, rest, state) do
+    {Enum.reverse(vars), rest, state}
+  end
 
-        {n, <<?:, s::binary>>} ->
-          {sym, r} = ExMarshal.Symbol.parse(s)
-          {val, rr} = ExMarshal.parse(r)
-          {{sym, val}, {n - 1, rr}}
-      end)
-      |> Enum.to_list()
-
-    {value, List.last(vars)}
+  defp parse_vars(count, vars, <<?:, source::binary>>, state) do
+    {sym, value_and_rest, state2} = ExMarshal.Symbol.parse(source, state)
+    {value, rest, state3} = ExMarshal.parse(value_and_rest, state2)
+    parse_vars(count - 1, [{sym, value} | vars], rest, state3)
   end
 end
